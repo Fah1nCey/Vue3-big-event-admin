@@ -7,7 +7,7 @@ import { userUploadAvatarService } from '@/api/user'
 const userStore = useUserStore()
 const uploadRef = ref()
 
-const imgUrl = ref(userStore.user.user_pic)
+const imgUrl = ref(userStore.user.userPic)
 const onUploadFile = (file) => {
   const reader = new FileReader()
   reader.readAsDataURL(file.raw)

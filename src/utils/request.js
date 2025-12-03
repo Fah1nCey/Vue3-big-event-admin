@@ -6,7 +6,8 @@ import { ElMessage } from 'element-plus'
 import router from '@/router'
 
 // `baseURL` 将自动加在 `url` 前面，除非 `url` 是一个绝对 URL
-const baseURL = 'http://big-event-vue-api-t.itheima.net'
+// const baseURL = 'http://big-event-vue-api-t.itheima.net'
+const baseURL = 'http://localhost:8080'
 
 // 标记是否正在处理 401 错误（防止重复触发登录）
 let isRefreshing = false

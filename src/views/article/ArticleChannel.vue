@@ -4,7 +4,7 @@ import { artGetChannelsService, artDelChannelService } from '@/api/article'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import ChannelEdit from '@/views/article/components/ChannelEdit.vue'
 import { ElMessageBox } from 'element-plus'
-
+// 文章分类管理
 // 加载loading
 const loading = ref(false)
 const channelList = ref([])
@@ -52,8 +52,8 @@ const onDelChannel = async (row) => {
     <!-- 主体部分 -->
     <el-table v-loading="loading" :data="channelList" style="width: 100%">
       <el-table-column type="index" label="序号" width="100" />
-      <el-table-column prop="cate_name" label="分类名称" />
-      <el-table-column prop="cate_alias" label="分类别名" />
+      <el-table-column prop="categoryName" label="分类名称" />
+      <el-table-column prop="categoryAlias" label="分类别名" />
       <el-table-column label="操作" width="100">
         <!-- el-table 在渲染每一行数据时，会通过作用域插槽（即 <template #default="scope">）
           向插槽内部传递一个包含当前行信息的对象，这个对象就是 scope。

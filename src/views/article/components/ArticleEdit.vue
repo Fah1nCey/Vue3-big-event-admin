@@ -9,7 +9,7 @@ import {
   artGetDetailService,
   artEditService
 } from '@/api/article'
-import { baseURL } from '@/utils/request'
+// import { baseURL } from '@/utils/request'
 import axios from 'axios'
 
 const visibleDrawer = ref(false)
@@ -18,10 +18,9 @@ const editorRef = ref()
 // 默认空数据
 const defaultForm = {
   title: '', // 标题
-  cate_id: '', // 分类id
-  // categoryId: '', // 自制版后端参数
+  categoryId: '', // 分类id
   content: '', // string内容
-  cover_img: '', // 封面图片 file对象
+  coverImg: '', // 封面图片 file对象
   state: '' // 状态
 }
 
@@ -30,17 +29,21 @@ const formModel = ref({ ...defaultForm })
 const open = async (raw) => {
   visibleDrawer.value = true
   if (raw.id) {
+    // 文章编辑
     // 因为raw中不存在content和cover_img属性信息
     // 所以需要基于raw.id发送请求，获取编辑对应的文章详情信息，进行回显
     // 回显文章详情内容
     const res = await artGetDetailService(raw.id)
     formModel.value = res.data.data
-    imgUrl.value = baseURL + formModel.value.cover_img
+    // imgUrl.value = baseURL + formModel.value.coverImg
+    imgUrl.value = formModel.value.coverImg
     // 提交给后台，需要的是 file 格式的，将网络图片，转成 file 格式
     // 网络图片转成 file 对象, 需要转换一下
-    formModel.value.cover_img = await imageUrlToFile(
+    formModel.value.coverImg = await imageUrlToFile(
       imgUrl.value,
-      formModel.value.cover_img
+      formModel.value.coverImg.substring(
+        formModel.value.coverImg.lastIndexOf('/') + 1
+      )
     )
   } else {
     // 重置表单信息
@@ -66,13 +69,13 @@ const onUploadFile = (uploadFile) => {
   // 生成预览图片
   imgUrl.value = URL.createObjectURL(uploadFile.raw)
   // 保存原始File对象到数据模型中
-  formModel.value.cover_img = uploadFile.raw
+  formModel.value.coverImg = uploadFile.raw
 }
 
 // 将网络图片地址转换为File对象
 async function imageUrlToFile(url, fileName) {
   try {
-    // 第一步：使用axios获取网络图片数据
+    // 第一步：使用axios获取网络图片数据(从腾讯云存储中获取图片数据,需要开启cross跨域)
     const response = await axios.get(url, { responseType: 'arraybuffer' })
     const imageData = response.data
 
@@ -94,6 +97,11 @@ async function imageUrlToFile(url, fileName) {
 // 发布&草稿文章、编辑文章
 const onPublish = async (state) => {
   formModel.value.state = state
+  // 富文本内容在数据库中存在标签，需要把标签去掉
+  formModel.value.content = formModel.value.content.replace(
+    /<\/?[^>]+(>|$)/g,
+    ''
+  )
   // 注意： 当前接口，需要的是formData 对象
   // 将对象 => 转换成 => formData对象
   const fd = new FormData()
@@ -127,13 +135,13 @@ const onPublish = async (state) => {
       <el-form-item label="文章标题" prop="title">
         <el-input v-model="formModel.title" placeholder="请输入标题"></el-input>
       </el-form-item>
-      <el-form-item label="文章分类" prop="cate_id">
+      <el-form-item label="文章分类" prop="categoryId">
         <channel-select
-          v-model="formModel.cate_id"
+          v-model="formModel.categoryId"
           width="100%"
         ></channel-select>
       </el-form-item>
-      <el-form-item label="文章封面" prop="cover_img">
+      <el-form-item label="文章封面" prop="coverImg">
         <el-upload
           class="avatar-uploader"
           :auto-upload="false"

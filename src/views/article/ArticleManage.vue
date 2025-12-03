@@ -9,9 +9,9 @@ import ArticleEdit from './components/ArticleEdit.vue'
 const loading = ref(false)
 const params = ref({
   // 当前是第几页
-  pagenum: 1,
-  pagesize: 5,
-  cate_id: '',
+  pageNum: 1,
+  pageSize: 5,
+  categoryId: '',
   state: ''
 })
 const articleList = ref([])
@@ -22,31 +22,31 @@ const articleEditRef = ref()
 const getArticleList = async () => {
   loading.value = true
   const arr = await artGetListService(params.value)
-  articleList.value = arr.data.data
-  total.value = arr.data.total
+  articleList.value = arr.data.data.items
+  total.value = arr.data.data.total
   loading.value = false
 }
 getArticleList()
 
 // 搜索、重置
 const onSearch = () => {
-  params.value.pagenum = 1
+  params.value.pageNum = 1
   getArticleList()
 }
 const onReset = () => {
-  params.value.pagenum = 1
-  ;((params.value.cate_id = ''), (params.value.state = ''))
+  params.value.pageNum = 1
+  ;((params.value.categoryId = ''), (params.value.state = ''))
   getArticleList()
 }
 
 // 分页逻辑
 const onSizeChange = (size) => {
-  params.value.pagenum = 1
-  params.value.pagesize = size
+  params.value.pageNum = 1
+  params.value.pageSize = size
   getArticleList()
 }
 const onCurrentChange = (page) => {
-  params.value.pagenum = page
+  params.value.pageNum = page
   getArticleList()
 }
 
@@ -74,8 +74,8 @@ const onAddArticle = () => {
 const onSuccess = (type) => {
   if (type === 'add') {
     // 如果是添加，需要跳转渲染最后一页，编辑直接渲染当前页
-    const lastPage = Math.ceil((total.value + 1) / params.value.pagesize)
-    params.value.pagenum = lastPage
+    const lastPage = Math.ceil((total.value + 1) / params.value.pageSize)
+    params.value.pageNum = lastPage
   }
   getArticleList()
 }
@@ -90,7 +90,10 @@ const onSuccess = (type) => {
       <el-form-item label="文章分类：">
         <!-- Vue2 => v-model: value 和 @input 的简写-->
         <!-- Vue3 => v-model: modelValue 和 @update:modelValue 的简写-->
-        <channel-select v-model="params.cate_id"></channel-select>
+        <channel-select
+          v-model="params.categoryId"
+          width="180px"
+        ></channel-select>
       </el-form-item>
       <el-form-item label="发布状态：">
         <el-select
@@ -114,10 +117,10 @@ const onSuccess = (type) => {
           <el-link type="primary" underline="never">{{ row.title }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column prop="cate_name" label="分类" />
+      <el-table-column prop="categoryName" label="分类" />
       <el-table-column prop="pub_date" label="发表时间">
         <template #default="{ row }">
-          {{ formatTime(row.pub_date) }}
+          {{ formatTime(row.createTime) }}
         </template>
       </el-table-column>
       <el-table-column prop="state" label="状态" />
@@ -146,8 +149,8 @@ const onSuccess = (type) => {
     <!-- 分页组件 -->
     <!-- 在标签中使用响应式对象不需要.value -->
     <el-pagination
-      v-model:current-page="params.pagenum"
-      v-model:page-size="params.pagesize"
+      v-model:current-page="params.pageNum"
+      v-model:page-size="params.pageSize"
       :page-sizes="[2, 3, 4, 5, 10]"
       layout="jumper, total, sizes, prev, pager, next"
       background

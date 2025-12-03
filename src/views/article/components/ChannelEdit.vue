@@ -2,11 +2,11 @@
 import { ref } from 'vue'
 import { artAddChannelService, artEditChannelService } from '@/api/article'
 import { ElMessage } from 'element-plus'
-// 添加文章分类弹层
+// 添加/编辑文章分类弹层
 const dialogVisible = ref(false)
 const formModel = ref({
-  cate_name: '',
-  cate_alias: ''
+  categoryName: '',
+  categoryAlias: ''
 })
 const formRef = ref()
 
@@ -25,7 +25,7 @@ defineExpose({
 })
 
 const rules = {
-  cate_name: [
+  categoryName: [
     { required: true, message: '请输入分类名称', trigger: 'blur' },
     {
       pattern: /^\S{1,10}$/,
@@ -33,7 +33,7 @@ const rules = {
       trigger: 'blur'
     }
   ],
-  cate_alias: [
+  categoryAlias: [
     { required: true, message: '请输入分类别名', trigger: 'blur' },
     {
       pattern: /^[a-zA-Z0-9]{1,15}$/,
@@ -73,16 +73,16 @@ const onSubmit = async () => {
       label-width="100px"
       style="padding-right: 30px"
     >
-      <el-form-item label="分类名称" prop="cate_name">
+      <el-form-item label="分类名称" prop="categoryName">
         <el-input
-          v-model="formModel.cate_name"
+          v-model="formModel.categoryName"
           minlength="1"
           maxlength="10"
         ></el-input>
       </el-form-item>
-      <el-form-item label="分类别名" prop="cate_alias">
+      <el-form-item label="分类别名" prop="categoryAlias">
         <el-input
-          v-model="formModel.cate_alias"
+          v-model="formModel.categoryAlias"
           minlength="1"
           maxlength="15"
         ></el-input>

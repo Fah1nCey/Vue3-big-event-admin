@@ -1,7 +1,7 @@
 <script setup>
 import { artGetChannelsService } from '@/api/article'
 import { ref } from 'vue'
-
+// 文章管理员搜索栏中的文章分类下拉选择器组件
 const channelList = ref([])
 const getChannelList = async () => {
   const arr = await artGetChannelsService()
@@ -31,14 +31,14 @@ const emit = defineEmits(['update:modelValue'])
     :modelValue="modelValue"
     @update:modelValue="emit('update:modelValue', $event)"
     placeholder="请选择"
-    :style="{ width }"
+    :style="{ width: width || '220px' }"
   >
-    <!-- { width } 是 { width: width } 的简写 -->
+    <!--  { width } 是 { width: width } 的简写  -->
     <!-- 如果对象的 属性名 和 变量名 完全相同，可以省略冒号和后面重复的变量名 -->
     <el-option
       v-for="channel in channelList"
       :key="channel.id"
-      :label="channel.cate_name"
+      :label="channel.categoryName"
       :value="channel.id"
     />
   </el-select>

@@ -101,7 +101,7 @@ const onCommand = async (command) => {
         </div>
         <el-dropdown placement="bottom-end" @command="onCommand">
           <span class="el-dropdown__box">
-            <el-avatar :src="useStore.user.user_pic || avatar" />
+            <el-avatar :src="useStore.user.userPic || avatar" />
             <el-icon>
               <CaretBottom />
             </el-icon>
