@@ -17,17 +17,17 @@ const rules = {
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
     {
-      pattern: /^[A-Za-z0-9]{1,10}$/,
-      message: '用户名需为 1-10 位大小写字母或数字',
+      pattern: /^[A-Za-z0-9]{5,16}$/,
+      message: '用户名需为 5-16 位大小写字母或数字',
       trigger: 'blur'
     }
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     {
-      min: 6,
-      max: 15,
-      message: '密码需为 6-15 位非空格字符',
+      min: 5,
+      max: 16,
+      message: '密码需为 5-16 位非空格字符',
       trigger: 'blur'
     },
     {

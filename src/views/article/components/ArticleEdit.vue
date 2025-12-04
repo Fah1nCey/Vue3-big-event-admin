@@ -10,7 +10,7 @@ import {
   artEditService
 } from '@/api/article'
 // import { baseURL } from '@/utils/request'
-import axios from 'axios'
+// import axios from 'axios'
 
 const visibleDrawer = ref(false)
 const emit = defineEmits(['success'])
@@ -36,15 +36,19 @@ const open = async (raw) => {
     const res = await artGetDetailService(raw.id)
     formModel.value = res.data.data
     // imgUrl.value = baseURL + formModel.value.coverImg
+    // imgUrl 是用来做图片预览的，用完后将coverImg重新赋值为空字符串
     imgUrl.value = formModel.value.coverImg
+    formModel.value.coverImg = ''
+    // 伐伐备注：点击编辑文章时，会自动把封面图片转成 file 对象，但图片未更改，会导致重复上传同一张图片的问题
+    // 解决方案：只有在用户更改封面图片时，才上传图片（有另外的方法，所以这个方法注释掉），后端接口设置成不必须上传封面图片
     // 提交给后台，需要的是 file 格式的，将网络图片，转成 file 格式
-    // 网络图片转成 file 对象, 需要转换一下
-    formModel.value.coverImg = await imageUrlToFile(
-      imgUrl.value,
-      formModel.value.coverImg.substring(
-        formModel.value.coverImg.lastIndexOf('/') + 1
-      )
-    )
+    // 网络图片转成 file 对象
+    // formModel.value.coverImg = await imageUrlToFile(
+    //   imgUrl.value,
+    //   formModel.value.coverImg.substring(
+    //     formModel.value.coverImg.lastIndexOf('/') + 1
+    //   )
+    // )
   } else {
     // 重置表单信息
     formModel.value = { ...defaultForm }
@@ -72,28 +76,6 @@ const onUploadFile = (uploadFile) => {
   formModel.value.coverImg = uploadFile.raw
 }
 
-// 将网络图片地址转换为File对象
-async function imageUrlToFile(url, fileName) {
-  try {
-    // 第一步：使用axios获取网络图片数据(从腾讯云存储中获取图片数据,需要开启cross跨域)
-    const response = await axios.get(url, { responseType: 'arraybuffer' })
-    const imageData = response.data
-
-    // 第二步：将图片数据转换为Blob对象
-    const blob = new Blob([imageData], {
-      type: response.headers['content-type']
-    })
-
-    // 第三步：创建一个新的File对象
-    const file = new File([blob], fileName, { type: blob.type })
-
-    return file
-  } catch (error) {
-    console.error('将图片转换为File对象时发生错误:', error)
-    throw error
-  }
-}
-
 // 发布&草稿文章、编辑文章
 const onPublish = async (state) => {
   formModel.value.state = state
@@ -106,6 +88,9 @@ const onPublish = async (state) => {
   // 将对象 => 转换成 => formData对象
   const fd = new FormData()
   for (let key in formModel.value) {
+    if (key === 'coverImg' && formModel.value.coverImg === '') {
+      continue
+    }
     fd.append(key, formModel.value[key])
   }
   if (formModel.value.id) {
